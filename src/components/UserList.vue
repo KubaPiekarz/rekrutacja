@@ -32,7 +32,7 @@
 import { ref } from 'vue';
 import { getUsers } from '../api/getUsers.js';
 import { deleteUser } from '../api/deleteUser.js';
-import UserProfile from './User.vue';
+import UserProfile from './UserProfile.vue';
 import UserEdit from './UserEdit.vue';
 
 const users = ref([]);
