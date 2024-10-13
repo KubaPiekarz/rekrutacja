@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <User v-for="user in users" :key="user.id" :user="user" @edit-user="editUser"
+                <UserProfile v-for="user in users" :key="user.id" :user="user" @edit-user="editUser"
                     @delete-user="deleteUserFunction" />
             </tbody>
         </table>
@@ -32,7 +32,7 @@
 import { ref } from 'vue';
 import { getUsers } from '../api/getUsers.js';
 import { deleteUser } from '../api/deleteUser.js';
-import User from './User.vue';
+import UserProfile from './User.vue';
 import UserEdit from './UserEdit.vue';
 
 const users = ref([]);
@@ -84,7 +84,7 @@ const editUser = (user) => {
 
 const deleteUserFunction = async (userId) => {
     const index = users.value.findIndex((element) => element.id === userId);
-    await deleteUser(userId).then((item)=>{
+    await deleteUser(userId).then(()=>{
         users.value.splice(index, 1)
     });
 };
