@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td class="user-info">
-            <img :src="user.avatar" alt="" class="avatar">
+            <img :src="user.avatar || require('../../assets/default-avatar.jpg')" alt="" class="avatar">
             <p>{{ user.first_name }} {{ user.last_name }}</p>
         </td>
         <td class="actions">

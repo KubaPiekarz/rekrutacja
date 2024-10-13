@@ -5,26 +5,26 @@
         <div class="form-container">
             <div class="form-section">
                 <label for="first-name">First Name</label>
-                <input id="first-name" v-model="userForEdit.first_name" type="text" />
+                <input id="first-name" v-model="localUser.first_name" type="text" :class="{errorInput:errorInput}" />
 
                 <label for="last-name">Last Name</label>
-                <input id="last-name" v-model="userForEdit.last_name" type="text" />
+                <input id="last-name" v-model="localUser.last_name" type="text" :class="{errorInput:errorInput}" />
 
                 <button class="update-btn" @click="emitUpdateUser">Update Details</button>
             </div>
             <div class="photo-section">
-                <img :src="userForEdit.avatar || require('../../assets/default-avatar.jpg') " alt="User avatar" class="avatar" />
-                <input id="avatar-url" v-model="userForEdit.avatar" type="text" placeholder="Enter image URL" class="urlInput" />
+                <img :src="localUser.avatar || require('../../assets/default-avatar.jpg')" alt="User avatar" class="avatar" />
+                <input id="avatar-url" v-model="localUser.avatar" type="text" placeholder="Enter image URL" class="urlInput" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'; 
 import { defineProps, defineEmits } from 'vue'; 
 import { addUser } from '../api/addUser.js'; 
 import { editUser } from '../api/editUser.js'; 
-
 
 const props = defineProps({
     userForEdit: {
@@ -43,22 +43,38 @@ const props = defineProps({
 
 const emit = defineEmits(['updateUser', 'closePopup']);
 
+const errorInput = ref(false)
+const localUser = ref({ ...props.userForEdit });
+
+watch(() => props.userForEdit, (newVal) => {
+    localUser.value = { ...newVal };
+});
+
 const emitUpdateUser = async () => {
     const newUser = {
-        first_name: props.userForEdit.first_name,
-        last_name: props.userForEdit.last_name,
-        avatar: props.userForEdit.avatar
+        first_name: localUser.value.first_name,
+        last_name: localUser.value.last_name,
+        avatar: localUser.value.avatar
     };
 
-    try {
-        let result
-        if(props.isNewUser) result = await addUser(newUser); 
-        else{
-            result = await editUser(props.userForEdit.id, newUser);
-        } 
-        emit('updateUser', result); 
-    } catch (error) {
-        console.error('Error adding user:', error);
+    if(localUser.value.first_name && localUser.value.last_name){
+        try {
+            let result;
+            if (props.isNewUser) {
+                result = await addUser(newUser); 
+            } else {
+                result = await editUser(props.userForEdit.id, newUser);
+            } 
+            emit('updateUser', result); 
+        } catch (error) {
+            console.error('Error adding user:', error);
+        }
+    }
+    else{
+        errorInput.value = true
+        setTimeout(() => {
+            errorInput.value = false
+        }, 3000);
     }
 };
 </script>
@@ -117,6 +133,10 @@ h2 {
     border-radius: 5px;
     width: 100%;
     font-size: 16px;
+}
+
+.errorInput{
+    border-color: red !important;
 }
 
 .urlInput{
