@@ -89,8 +89,10 @@ const emitUpdateUser = async () => {
     font-family: Arial, sans-serif;
     background: white;
     max-width: 900px;
+    position: relative;
     @media only screen and (max-width: 700px) {
         margin: auto;
+        height: 100%;
     }
 }
 
